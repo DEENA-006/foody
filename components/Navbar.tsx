@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ShoppingCart, User, Menu, Search, LogOut, Settings } from 'lucide-react';
 import { useCartStore } from '@/lib/store';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -15,13 +15,28 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
   const [activeLink, setActiveLink] = useState('home');
 
-  // Scroll spy to update active link based on section IDs
+  // Update active link based on pathname and scroll
   useEffect(() => {
+    if (pathname === '/menu') {
+      setActiveLink('menu');
+      return;
+    }
+
     const handleScroll = () => {
-      const sections = ['home', 'menu', 'about', 'contact'];
+      if (pathname !== '/') return;
+      
+      const sections = ['home', 'about', 'contact'];
       const scrollPos = window.scrollY + 200; // offset for earlier activation
+      
+      // Default to home if at the very top
+      if (window.scrollY < 100) {
+        setActiveLink('home');
+        return;
+      }
+      
       for (const sec of sections) {
         const el = document.getElementById(sec);
         if (el) {
@@ -34,9 +49,13 @@ export default function Navbar() {
         }
       }
     };
+    
+    // Initial check
+    handleScroll();
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     setMounted(true);

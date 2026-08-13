@@ -5,13 +5,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { Trash2, Minus, Plus, ArrowRight, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/lib/store";
+import Toast from "@/components/Toast";
 
 export default function CartPage() {
   const [mounted, setMounted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const cartItems = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const getTotalPrice = useCartStore((state) => state.getTotalPrice);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  const handleCheckout = () => {
+    setShowToast(true);
+    setTimeout(() => {
+      clearCart();
+    }, 2500);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -127,7 +137,7 @@ export default function CartPage() {
                 </div>
               </div>
               
-              <button className="w-full bg-brand hover:bg-brand-hover text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 text-lg">
+              <button onClick={handleCheckout} className="w-full bg-brand hover:bg-brand-hover text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 text-lg">
                 Proceed to Checkout
                 <ArrowRight className="h-5 w-5" />
               </button>
@@ -135,6 +145,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      <Toast message="Order placed successfully!" isVisible={showToast} onClose={() => setShowToast(false)} />
     </div>
   );
 }

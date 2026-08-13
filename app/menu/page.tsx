@@ -12,6 +12,7 @@ export default function MenuPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortAsc, setSortAsc] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -55,7 +56,7 @@ export default function MenuPage() {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
-  });
+  }).sort((a, b) => sortAsc ? a.price - b.price : b.price - a.price);
 
   return (
     <div className="min-h-screen bg-background py-12">
@@ -81,7 +82,7 @@ export default function MenuPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button className="bg-card border border-border p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+            <button onClick={() => setSortAsc(!sortAsc)} className="bg-card border border-border p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors" title="Toggle Sort by Price">
               <SlidersHorizontal className="h-5 w-5 text-foreground" />
             </button>
           </div>

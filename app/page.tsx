@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import FoodCard from "@/components/FoodCard";
-import HeroSearch from "@/components/HeroSearch";
 import { reviews } from "@/lib/data";
 import { fetchCategories, fetchMealsByCategory } from "@/lib/api";
 import { MapPin, Phone, Mail, Clock, ShieldCheck, Map, Truck } from "lucide-react";
@@ -28,9 +27,6 @@ export default async function Home() {
           <p className="text-xl text-gray-200 mb-10 max-w-2xl mx-auto drop-shadow">
             Experience the best meals from top chefs in your city. Fresh ingredients, authentic flavors, and lightning-fast delivery.
           </p>
-          <div className="mb-10">
-            <HeroSearch />
-          </div>
           <Link 
             href="/menu" 
             className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-full text-lg font-bold transition-all transform hover:scale-105 shadow-xl hover:shadow-brand/50"
@@ -81,7 +77,7 @@ export default async function Home() {
                   <span className="bg-brand text-white text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">Limited Time</span>
                   <h3 className="text-3xl font-bold text-white mb-2">50% OFF</h3>
                   <p className="text-gray-300 mb-4">On all Italian pizzas</p>
-                  <button className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-gray-200 transition-colors">Claim Now</button>
+                  <Link href="/menu?category=Italian" className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-gray-200 transition-colors inline-block text-center">Claim Now</Link>
                 </div>
               </div>
             </div>
@@ -92,7 +88,7 @@ export default async function Home() {
                   <span className="bg-white text-brand text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">New Users</span>
                   <h3 className="text-3xl font-bold text-white mb-2">Free Delivery</h3>
                   <p className="text-gray-100 mb-4">On your first 3 orders</p>
-                  <button className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-900 transition-colors">Order Now</button>
+                  <Link href="/menu" className="bg-black text-white px-6 py-2 rounded-full font-bold hover:bg-gray-900 transition-colors inline-block text-center">Order Now</Link>
                 </div>
               </div>
             </div>
@@ -127,33 +123,33 @@ export default async function Home() {
       </section>
 
       {/* Why Foodiee Section */}
-      <section className="py-20 bg-brand text-white">
+      <section className="py-20 bg-gray-900 dark:bg-black/90 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Foodiee?</h2>
-            <div className="h-1 w-20 bg-white mx-auto rounded-full"></div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-brand">Why Foodiee?</h2>
+            <div className="h-1 w-20 bg-brand mx-auto rounded-full"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-            <div className="p-6">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-                <ShieldCheck className="w-10 h-10 text-white" />
+            <div className="p-6 hover:-translate-y-2 transition-transform duration-300">
+              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                <ShieldCheck className="w-10 h-10 text-green-400" />
               </div>
-              <h3 className="text-5xl font-black mb-2">300+</h3>
-              <p className="text-xl font-medium text-white/80">Restaurants</p>
+              <h3 className="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-green-500 drop-shadow-sm">300+</h3>
+              <p className="text-xl font-medium text-gray-300">Restaurants</p>
             </div>
-            <div className="p-6">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-                <Map className="w-10 h-10 text-white" />
+            <div className="p-6 hover:-translate-y-2 transition-transform duration-300">
+              <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                <Map className="w-10 h-10 text-blue-400" />
               </div>
-              <h3 className="text-5xl font-black mb-2">50+</h3>
-              <p className="text-xl font-medium text-white/80">Cities</p>
+              <h3 className="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-500 drop-shadow-sm">50+</h3>
+              <p className="text-xl font-medium text-gray-300">Cities</p>
             </div>
-            <div className="p-6">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-                <Truck className="w-10 h-10 text-white" />
+            <div className="p-6 hover:-translate-y-2 transition-transform duration-300">
+              <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                <Truck className="w-10 h-10 text-purple-400" />
               </div>
-              <h3 className="text-5xl font-black mb-2">3M+</h3>
-              <p className="text-xl font-medium text-white/80">Orders Delivered</p>
+              <h3 className="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-purple-500 drop-shadow-sm">3M+</h3>
+              <p className="text-xl font-medium text-gray-300">Orders Delivered</p>
             </div>
           </div>
         </div>
@@ -260,26 +256,26 @@ export default async function Home() {
               </div>
             </div>
             
-            <form className="bg-card p-8 rounded-3xl shadow-sm border border-border">
+            <form action="mailto:deenadayalanv2@gmail.com" method="POST" encType="text/plain" className="bg-card p-8 rounded-3xl shadow-sm border border-border">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">First Name</label>
-                  <input type="text" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="John" />
+                  <input type="text" name="First Name" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="John" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Last Name</label>
-                  <input type="text" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="Doe" />
+                  <input type="text" name="Last Name" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="Doe" />
                 </div>
               </div>
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">Email Address</label>
-                <input type="email" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="john@example.com" />
+                <input type="email" name="Email" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="john@example.com" />
               </div>
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">Message</label>
-                <textarea rows={4} className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="How can we help you?"></textarea>
+                <textarea name="Message" rows={4} className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="How can we help you?"></textarea>
               </div>
-              <button type="button" className="w-full bg-brand hover:bg-brand-hover text-white font-bold py-4 rounded-xl transition-colors">
+              <button type="submit" className="w-full bg-brand hover:bg-brand-hover text-white font-bold py-4 rounded-xl transition-colors">
                 Send Message
               </button>
             </form>
