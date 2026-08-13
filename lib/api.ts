@@ -35,7 +35,7 @@ export async function fetchMealsByCategory(category: string): Promise<FoodItem[]
       name: meal.strMeal,
       category: category,
       price: (Math.random() * 15 + 5), // Mock price since API doesn't have it
-      rating: (Math.random() * 1 + 4).toFixed(1), // Mock rating 4.0 - 5.0
+      rating: Number((Math.random() * 1 + 4).toFixed(1)), // Mock rating 4.0 - 5.0
       reviews: Math.floor(Math.random() * 200 + 50),
       image: meal.strMealThumb,
       description: 'A delicious meal from our kitchen.',
@@ -52,7 +52,7 @@ export async function fetchMealsByCategory(category: string): Promise<FoodItem[]
         name: `Delicious ${category} Special`,
         category: category,
         price: 12.99,
-        rating: "4.5",
+        rating: 4.5,
         reviews: 120,
         image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop",
         description: 'A delicious meal from our kitchen (fallback data).',
@@ -77,7 +77,7 @@ export async function fetchAllMeals(): Promise<FoodItem[]> {
       name: meal.strMeal,
       category: meal.strCategory || 'Various',
       price: (Math.random() * 15 + 5), // Mock price
-      rating: (Math.random() * 1 + 4).toFixed(1), // Mock rating 4.0 - 5.0
+      rating: Number((Math.random() * 1 + 4).toFixed(1)), // Mock rating 4.0 - 5.0
       reviews: Math.floor(Math.random() * 200 + 50),
       image: meal.strMealThumb,
       description: meal.strInstructions ? meal.strInstructions.slice(0, 100) + '...' : 'A delicious meal from our kitchen.',
@@ -94,7 +94,7 @@ export async function fetchAllMeals(): Promise<FoodItem[]> {
         name: "Chef's Special",
         category: "Various",
         price: 15.99,
-        rating: "4.8",
+        rating: 4.8,
         reviews: 300,
         image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop",
         description: "A signature dish crafted by our executive chef.",
@@ -128,7 +128,7 @@ export async function fetchMealDetails(id: string): Promise<FoodItem | null> {
       name: meal.strMeal,
       category: meal.strCategory,
       price: 12.99, // Static mock price
-      rating: "4.8",
+      rating: 4.8,
       reviews: 124,
       image: meal.strMealThumb,
       description: meal.strInstructions.slice(0, 250) + '...',
@@ -144,7 +144,7 @@ export async function fetchMealDetails(id: string): Promise<FoodItem | null> {
       name: "Delicious Meal",
       category: "Various",
       price: 12.99,
-      rating: "4.8",
+      rating: 4.8,
       reviews: 124,
       image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop",
       description: "A delightful dish prepared just for you.",
