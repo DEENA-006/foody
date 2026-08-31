@@ -6,20 +6,31 @@ interface CartItem extends FoodItem {
   quantity: number;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discountPercent: number;
+  discountAmount: number;
+}
+
 interface CartState {
   items: CartItem[];
+  appliedCoupon: AppliedCoupon | null;
   addItem: (item: FoodItem, quantity?: number) => void;
   removeItem: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
+  applyCoupon: (coupon: AppliedCoupon) => void;
+  removeCoupon: () => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  getDiscountAmount: () => number;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      appliedCoupon: null,
       
       addItem: (item, quantity = 1) => {
         set((state) => {
@@ -52,8 +63,16 @@ export const useCartStore = create<CartState>()(
           ),
         }));
       },
+
+      applyCoupon: (coupon) => {
+        set({ appliedCoupon: coupon });
+      },
+
+      removeCoupon: () => {
+        set({ appliedCoupon: null });
+      },
       
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], appliedCoupon: null }),
       
       getTotalItems: () => {
         return get().items.reduce((total, item) => total + item.quantity, 0);
@@ -61,6 +80,13 @@ export const useCartStore = create<CartState>()(
       
       getTotalPrice: () => {
         return get().items.reduce((total, item) => total + (item.price * item.quantity), 0);
+      },
+
+      getDiscountAmount: () => {
+        const coupon = get().appliedCoupon;
+        if (!coupon) return 0;
+        const subtotal = get().getTotalPrice();
+        return Math.round(((subtotal * coupon.discountPercent) / 100) * 100) / 100;
       },
     }),
     {

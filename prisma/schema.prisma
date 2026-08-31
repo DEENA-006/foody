@@ -3,15 +3,117 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String?
-  email     String   @unique
+  email     String    @unique
   password  String
+  phone     String?
+  role      String    @default("USER") // USER or ADMIN
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  addresses Address[]
+  orders    Order[]
+  reviews   Review[]
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  label      String   @default("Home")
+  street     String
+  city       String
+  state      String
+  zip        String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  subtotal      Float
+  tax           Float
+  deliveryFee   Float
+  discount      Float       @default(0)
+  total         Float
+  status        String      @default("PENDING") // PENDING, PREPARING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, RETURN_REQUESTED, RETURNED
+  address       String
+  paymentMethod String      @default("cod")
+  couponCode    String?
+  
+  // Cancel Order Details
+  cancelReason  String?
+  cancelledAt   DateTime?
+
+  // Return Order Details
+  returnReason  String?
+  returnDetails String?
+  returnStatus  String?
+  returnPickup  String?
+  refundAmount  Float?
+  returnedAt    DateTime?
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id])
+  foodId   String
+  name     String
+  image    String
+  price    Float
+  quantity Int
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  foodId    String
+  foodName  String?
+  rating    Int      // 1 to 5
+  comment   String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+}
+
+model Food {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  price       Float
+  rating      Float    @default(4.8)
+  reviews     Int      @default(0)
+  image       String
+  description String
+  calories    Int      @default(500)
+  protein     String   @default("25g")
+  carbs       String   @default("45g")
+  fat         String   @default("15g")
+  spiceLevel  Int      @default(0)
+  dietary     String   @default("Chef Special")
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Coupon {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  discountPercent Int
+  maxUses         Int      @default(100)
+  usedCount       Int      @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
 }

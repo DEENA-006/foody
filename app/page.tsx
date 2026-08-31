@@ -5,6 +5,11 @@ import FoodCard from "@/components/FoodCard";
 import { reviews } from "@/lib/data";
 import { fetchCategories, fetchMealsByCategory } from "@/lib/api";
 import { MapPin, Phone, Mail, Clock, ShieldCheck, Map, Truck } from "lucide-react";
+import ContactForm from "@/components/ContactForm";
+
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export default async function Home() {
   const categories = await fetchCategories();
@@ -12,6 +17,26 @@ export default async function Home() {
   
   // Take only the first 4 for featured
   const topFeatured = featuredItems.slice(0, 4);
+
+  let customerReviews = reviews;
+  try {
+    const dbReviews = await prisma.review.findMany({
+      take: 3,
+      orderBy: { createdAt: "desc" },
+      include: { user: { select: { name: true, email: true } } },
+    });
+    if (dbReviews.length > 0) {
+      customerReviews = dbReviews.map((r) => ({
+        id: r.id as any,
+        user: r.user?.name || r.user?.email?.split("@")[0] || "Happy Food Lover",
+        rating: r.rating,
+        comment: r.comment,
+        avatar: "",
+      }));
+    }
+  } catch (err) {
+    console.warn("Could not fetch db reviews:", err);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -50,7 +75,7 @@ export default async function Home() {
               <Link href={`/menu?category=${category.name}`} key={category.id}>
                 <div className="bg-card hover:bg-brand group border border-border rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:-translate-y-2 flex flex-col items-center">
                   <div className="relative w-24 h-24 mb-4 rounded-full overflow-hidden shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <Image src={category.icon} alt={category.name} fill className="object-cover" />
+                    <Image src={category.icon} alt={category.name} fill className="object-cover" sizes="96px" />
                   </div>
                   <h3 className="font-semibold text-foreground group-hover:text-white transition-colors text-lg">{category.name}</h3>
                 </div>
@@ -71,18 +96,18 @@ export default async function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="relative rounded-3xl overflow-hidden h-64 shadow-lg group">
-              <Image src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop" alt="Offer 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              <Image src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop" alt="Offer 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 50vw" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent flex items-center p-8">
                 <div>
                   <span className="bg-brand text-white text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">Limited Time</span>
                   <h3 className="text-3xl font-bold text-white mb-2">50% OFF</h3>
                   <p className="text-gray-300 mb-4">On all Italian pizzas</p>
-                  <Link href="/menu?category=Italian" className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-gray-200 transition-colors inline-block text-center">Claim Now</Link>
+                  <Link href="/menu?search=pizza" className="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-gray-200 transition-colors inline-block text-center">Claim Now</Link>
                 </div>
               </div>
             </div>
             <div className="relative rounded-3xl overflow-hidden h-64 shadow-lg group">
-              <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop" alt="Offer 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop" alt="Offer 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 50vw" />
               <div className="absolute inset-0 bg-gradient-to-r from-brand/90 to-brand/30 flex items-center p-8">
                 <div>
                   <span className="bg-white text-brand text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">New Users</span>
@@ -101,7 +126,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="w-full md:w-1/2 relative h-[500px] rounded-3xl overflow-hidden shadow-2xl">
-              <Image src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" alt="About Us" fill className="object-cover" />
+              <Image src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" alt="About Us" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
             </div>
             <div className="w-full md:w-1/2">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">About Foodiee</h2>
@@ -187,7 +212,7 @@ export default async function Home() {
           <div className="h-1 w-20 bg-brand mx-auto rounded-full mb-16"></div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {reviews.map((review) => (
+            {customerReviews.map((review) => (
               <div key={review.id} className="bg-card p-8 rounded-2xl shadow-sm border border-border relative">
                 <div className="text-brand text-4xl absolute -top-5 left-8 bg-background px-2">"</div>
                 <p className="text-foreground/80 mb-6 relative z-10 italic">
@@ -256,29 +281,7 @@ export default async function Home() {
               </div>
             </div>
             
-            <form action="mailto:deenadayalanv2@gmail.com" method="POST" encType="text/plain" className="bg-card p-8 rounded-3xl shadow-sm border border-border">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">First Name</label>
-                  <input type="text" name="First Name" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="John" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Last Name</label>
-                  <input type="text" name="Last Name" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="Doe" />
-                </div>
-              </div>
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Email Address</label>
-                <input type="email" name="Email" className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="john@example.com" />
-              </div>
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Message</label>
-                <textarea name="Message" rows={4} className="w-full px-4 py-3 border border-border bg-background rounded-xl focus:ring-2 focus:ring-brand outline-none" placeholder="How can we help you?"></textarea>
-              </div>
-              <button type="submit" className="w-full bg-brand hover:bg-brand-hover text-white font-bold py-4 rounded-xl transition-colors">
-                Send Message
-              </button>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </section>

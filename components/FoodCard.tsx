@@ -8,19 +8,23 @@ import { FoodItem } from '@/lib/data';
 import { useCartStore, useFavoriteStore } from '@/lib/store';
 import ConfirmationModal from './ConfirmationModal';
 import Toast from './Toast';
+import { useRouter } from 'next/navigation';
 
 export default function FoodCard({ item }: { item: FoodItem }) {
   const addItem = useCartStore((state) => state.addItem);
-  const { favorites, addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
   const [modalState, setModalState] = useState<{isOpen: boolean, actionType: 'cart'|'buy'}>({ isOpen: false, actionType: 'cart' });
   const [toastMessage, setToastMessage] = useState("");
+  const router = useRouter();
 
   const handleConfirm = (confirmedQty: number) => {
     if (modalState.actionType === 'cart') {
       addItem(item, confirmedQty);
       setToastMessage("Added to cart ✅");
     } else {
-      setToastMessage("Redirecting to checkout...");
+      // Buy Now: add to cart then navigate to cart
+      addItem(item, confirmedQty);
+      router.push('/cart');
     }
   };
 
@@ -42,15 +46,16 @@ export default function FoodCard({ item }: { item: FoodItem }) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+        <div className="absolute top-3 right-3 bg-card/95 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 shadow-sm border border-border/50">
           <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="text-xs font-semibold">{item.rating}</span>
+          <span className="text-xs font-semibold text-foreground">{item.rating}</span>
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFavorite(); }}
-          className="absolute top-3 left-3 text-red-500 hover:text-red-700 transition-colors"
+          className="absolute top-3 left-3 text-red-500 hover:text-red-700 transition-colors p-1.5 rounded-full bg-card/90 backdrop-blur-sm border border-border/30"
+          aria-label={isFavorite(item.id) ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
         >
-          {isFavorite(item.id) ? <Heart className="h-5 w-5 fill-current" /> : <Heart className="h-5 w-5" />}
+          {isFavorite(item.id) ? <Heart className="h-4 w-4 fill-current" /> : <Heart className="h-4 w-4" />}
         </button>
       </Link>
       

@@ -6,10 +6,12 @@ import { useCartStore } from "@/lib/store";
 import { FoodItem } from "@/lib/data";
 import ConfirmationModal from "./ConfirmationModal";
 import Toast from "./Toast";
+import { useRouter } from "next/navigation";
 
 export default function AddToCartControls({ item }: { item: FoodItem }) {
   const [quantity, setQuantity] = useState(1);
   const addItem = useCartStore((state) => state.addItem);
+  const router = useRouter();
   
   const [modalState, setModalState] = useState<{isOpen: boolean, actionType: 'cart'|'buy'}>({ isOpen: false, actionType: 'cart' });
   const [toastMessage, setToastMessage] = useState("");
@@ -19,7 +21,9 @@ export default function AddToCartControls({ item }: { item: FoodItem }) {
       addItem(item, confirmedQty);
       setToastMessage("Added to cart ✅");
     } else {
-      setToastMessage("Redirecting to checkout...");
+      // Buy Now: add to cart then navigate
+      addItem(item, confirmedQty);
+      router.push('/cart');
     }
   };
 

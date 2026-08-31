@@ -73,7 +73,7 @@ export default function ConfirmationModal({
         
         <div className="flex gap-4 items-center mb-6">
           <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
-            <Image src={item.image} alt={item.name} fill className="object-cover" />
+            <Image src={item.image} alt={item.name} fill className="object-cover" sizes="80px" />
           </div>
           <div>
             <h3 className="font-bold text-lg leading-tight line-clamp-1">{item.name}</h3>
